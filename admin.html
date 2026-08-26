@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>لوحة تحكم مهيوب | إدارة المعرض والخدمات الرقمية</title>
+  <!-- أيقونة الموقع (Favicon) -->
+  <link rel="icon" type="image/png" href="assets/avatar.png">
+  <link rel="apple-touch-icon" href="assets/avatar.png">
+  
+  <!-- Fonts: Zain (Arabic Primary) & Plus Jakarta Sans (Numbers) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@200;300;400;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- React & ReactDOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- Babel standalone for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <style>
+    /* ==========================================================================
+       Mahyoub React Admin Dashboard - Standalone Styles
+       Colors: #1A1A2E Background, #E94560 Accent Button
+       Font: Zain RTL
+       ========================================================================== */
+    :root {
+      --bg-main: #1A1A2E;
+      --bg-card: #16213E;
+      --bg-surface: #0F3460;
+      --bg-hover: #1F2B48;
+      --bg-input: #0D1B2A;
+      
+      --accent: #E94560;
+      --accent-hover: #D13650;
+      --accent-glow: rgba(233, 69, 96, 0.35);
+      
+      --emerald: #10B981;
+      --emerald-bg: rgba(16, 185, 129, 0.15);
+      
+      --cyan: #00B4D8;
+      --cyan-bg: rgba(0, 180, 216, 0.15);
+      
+      --amber: #F59E0B;
+      --amber-bg: rgba(245, 158, 11, 0.15);
+      
+      --text-main: #FFFFFF;
+      --text-muted: #94A3B8;
+      
+      --border-color: #2A2A4A;
+      --font-arabic: 'Zain', sans-serif;
+      --font-number: 'Plus Jakarta Sans', sans-serif;
+      
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+      --shadow-glow: 0 10px 30px rgba(233, 69, 96, 0.25);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      direction: rtl;
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-arabic);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(233, 69, 96, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(15, 52, 96, 0.3) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track { background: var(--bg-main); }
+    ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-arabic);
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    button {
+      font-family: var(--font-arabic);
+      cursor: pointer;
+      border: none;
+      outline: none;
+      background: none;
+    }
+
+    input, select, textarea {
+      font-family: var(--font-arabic);
+    }
+
+    .app-container {
+      max-width: 1350px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .dashboard-header {
+      background: rgba(22, 33, 62, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-lg);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand-info {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, var(--accent) 0%, #FF6B81 100%);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      color: white;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .brand-titles h1 {
+      font-size: 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-titles p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .save-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 20px;
+      background: var(--emerald-bg);
+      color: var(--emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .stat-card {
+      background: rgba(22, 33, 62, 0.7);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    .stat-info .stat-value {
+      font-size: 1.8rem;
+      font-weight: 900;
+      font-family: var(--font-number);
+    }
+
+    .stat-info .stat-label {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .tabs-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(15, 52, 96, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 0.5rem;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tabs-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1.4rem;
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 1.15rem;
+      transition: all 0.25s ease;
+      border: 1px solid transparent;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: white;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .tab-badge {
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.15rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-family: var(--font-number);
+    }
+
+    .service-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .service-title-area h2 {
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .service-title-area p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .filter-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      min-width: 240px;
+    }
+
+    .search-input-wrapper i {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.65rem 2.8rem 0.65rem 1rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: white;
+      font-size: 1rem;
+      transition: all 0.25s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .select-filter {
+      padding: 0.65rem 1rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      padding: 0.75rem 1.4rem;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all 0.25s ease;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(233, 69, 96, 0.45);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1.4rem;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all 0.25s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-hover);
+      border-color: var(--text-muted);
+      transform: translateY(-2px);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .portfolio-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .portfolio-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), var(--shadow-glow);
+    }
+
+    .browser-mockup-header {
+      background: #16213E;
+      padding: 0.55rem 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #2A2A4A;
+    }
+
+    .browser-mockup-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .browser-mockup-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .browser-mockup-url {
+      font-size: 0.8rem;
+      color: #94A3B8;
+      font-family: var(--font-number);
+      direction: ltr;
+    }
+
+    .portfolio-image-wrapper {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      overflow: hidden;
+      background: #0F172A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .portfolio-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      transform: scale(1.08);
+      transition: transform 0.5s ease;
+      display: block;
+    }
+
+    .portfolio-card:hover .portfolio-img {
+      transform: scale(1.16);
+    }
+
+    .sector-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(26, 26, 46, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .portfolio-content {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 0.85rem;
+    }
+
+    .portfolio-title {
+      font-size: 1.35rem;
+      color: white;
+    }
+
+    .portfolio-desc {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .portfolio-result {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #34D399;
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: auto;
+    }
+
+    .portfolio-card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 0.5rem;
+    }
+
+    .btn-visit {
+      color: var(--cyan);
+      font-weight: 700;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+    }
+
+    .action-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .action-icon-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 20, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 2rem;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-label {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: white;
+      font-size: 1.05rem;
+    }
+
+    .form-select option, .select-filter option {
+      background-color: #FFFFFF;
+      color: #0F172A;
+      font-weight: 700;
+      padding: 0.5rem;
+    }
+
+    .screenshot-fetch-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .screenshot-fetch-row input { flex: 1; }
+
+    .btn-fetch-screenshot {
+      background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-hover) 100%);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 0.8rem 1.2rem;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-fetch-screenshot:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .exporter-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .exporter-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      background: var(--bg-surface);
+      padding: 1.25rem 1.5rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+    }
+
+    .device-switcher {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-main);
+      padding: 0.3rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .device-btn {
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .device-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .preview-container-wrapper {
+      background: #0A0A14;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 450px;
+    }
+
+    .preview-frame {
+      background: #1A1A2E;
+      border: 2px solid #2A2A4A;
+      border-radius: 12px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+      transition: all 0.4s ease;
+      overflow-y: auto;
+      max-height: 550px;
+    }
+
+    .preview-frame.laptop { width: 100%; max-width: 1050px; }
+    .preview-frame.tablet { width: 768px; max-width: 100%; }
+    .preview-frame.mobile { width: 375px; max-width: 100%; }
+
+    .preview-browser-bar {
+      background: #16213E;
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-bottom: 1px solid #2A2A4A;
+    }
+
+    .browser-dots { display: flex; gap: 6px; }
+    .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .browser-url {
+      background: #0F3460;
+      padding: 0.2rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      flex: 1;
+      text-align: center;
+      direction: ltr;
+    }
+
+    .code-box-wrapper {
+      background: #0D1B2A;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .code-box-header {
+      background: #16213E;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .code-content {
+      padding: 1.25rem;
+      color: #A7F3D0;
+      font-family: monospace;
+      font-size: 0.92rem;
+      direction: ltr;
+      text-align: left;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 350px;
+      overflow-y: auto;
+      background: #0A0F1A;
+    }
+
+    .toast-container {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      z-index: 3000;
+    }
+
+    .toast {
+      background: rgba(22, 33, 62, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--emerald);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React Application Component script rendered via Babel -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const INITIAL_SERVICES = [
+      { id: 'wordpress', name: 'مواقع ووردبريس', icon: 'fa-wordpress', description: 'تطوير مواقع وتطبيقات ووردبريس مخصصة، سريعة وآمنة' },
+      { id: 'ai', name: 'مواقع الذكاء الاصطناعي', icon: 'fa-robot', description: 'بناء مواقع ذكية مدعومة بشات بوت تفاعلي وأتمتة الـ AI' },
+      { id: 'google-ads', name: 'إعلانات جوجل', icon: 'fa-google', description: 'إدارة حملات Google Ads بعائد استثمار استثنائي (ROAS)' }
+    ];
+
+    const SECTORS_LIST = [
+      'موقع تعريفي',
+      'موقع إعلاني / صفحة هبوط',
+      'التجارة الإلكترونية', 'العقارات والاستثمار', 'الأغذية والمشروبات',
+      'الصحة والجمال', 'التعليم والتدريب', 'الخدمات الاستشارية والقانونية',
+      'التقنية والحلول البرمجية', 'السياحة والسفر', 'السيارات والخدمات اللوجستية', 'حلي ومجوهرات'
+    ];
+
+    const INITIAL_PROJECTS = [
+      {
+        id: 'proj-1787611091421',
+        serviceId: 'wordpress',
+        title: 'مؤسسة رؤية التشييد للمقاولات',
+        sector: 'موقع تعريفي',
+        url: 'https://muqawalatdammam.com/',
+        image: 'https://iad.microlink.io/qjk8sffln2MwN1crB6wTfTHL8DdXd-YaYk1i57D_PpSm4GQbaOjFUSXDVmiR3Fs5mvWkPUQIMXnGqrYCddqIHw.png',
+        description: 'تصميم وتطوير موقع مؤسسة رؤية التشييد للمقاولات العامة بالدمام والخبر مع أداء عالي وتصفح سريع.',
+        result: 'موقع تعريفي متكامل أونلاين'
+      }
+    ];
+
+    function generateServiceHTML(projects, serviceId = 'all') {
+      const filtered = serviceId === 'all' ? projects : projects.filter(p => p.serviceId === serviceId);
+      const titleText = serviceId === 'wordpress' ? 'معرض مواقع ووردبريس المخصصة'
+        : serviceId === 'ai' ? 'معرض مواقع وتطبيقات الذكاء الاصطناعي'
+        : serviceId === 'google-ads' ? 'نتائج حملات إعلانات جوجل الاحترافية'
+        : 'معرض كافة الأعمال والمشاريع';
+
+      const cardsHtml = filtered.map(p => `
+    <!-- بطاقة مشروع: ${p.title} -->
+    <div class="portfolio-card" data-sector="${p.sector}">
+      <div class="portfolio-image-wrapper">
+        <img src="${p.image}" alt="${p.title}" loading="lazy" class="portfolio-img">
+        <span class="sector-badge"><i class="fas fa-tag"></i> ${p.sector}</span>
+      </div>
+      <div class="portfolio-content">
+        <h3 class="portfolio-title">${p.title}</h3>
+        <p class="portfolio-desc">${p.description}</p>
+        <div class="portfolio-result">
+          <i class="fas fa-chart-line"></i>
+          <span>${p.result}</span>
+        </div>
+        <div class="portfolio-actions">
+          <a href="${p.url}" target="_blank" rel="noopener noreferrer" class="btn-visit">
+            زيارة الموقع <i class="fas fa-external-link-alt"></i>
+          </a>
+        </div>
+      </div>
+    </div>`).join('\n');
+
+      return `
+<!-- ========================================================================== -->
+<!-- قسم المعرض والمشاريع المنجزة - تصدير تلقائي من لوحة تحكم مهيوب -->
+<!-- ========================================================================== -->
+<section class="portfolio-section" id="portfolio">
+  <div class="container">
+    <div class="section-header text-center">
+      <span class="section-badge"><i class="fas fa-briefcase"></i> المشاريع المنجزة</span>
+      <h2 class="section-title">${titleText}</h2>
+      <p class="section-subtitle">نماذج حقيقية من مشاريع نجحنا في تطويرها وتحقيق نتائج ملموسة فيها</p>
+    </div>
+    <div class="portfolio-grid">
+${cardsHtml}
+    </div>
+  </div>
+</section>`.trim();
+    }
+
+    function App() {
+      const [projects, setProjects] = useState(() => {
+        try {
+          const saved = localStorage.getItem('mahyoub_portfolio_projects_v1');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              const isCorrupt = parsed.some(p => (p.title && p.title.includes('???')) || (p.sector && p.sector.includes('???')));
+              if (isCorrupt) {
+                localStorage.removeItem('mahyoub_portfolio_projects_v1');
+              } else {
+                return parsed;
+              }
+            }
+          }
+        } catch (e) {}
+        return INITIAL_PROJECTS;
+      });
+
+      const [isAuthenticated, setIsAuthenticated] = useState(() => {
+        return sessionStorage.getItem('mahyoub_admin_auth') === 'true';
+      });
+      const [passInput, setPassInput] = useState('');
+      const [passError, setPassError] = useState('');
+      const ADMIN_PASSWORD = 'mahyoub2026'; // كلمة المرور الافتراضية للوحة التحكم
+
+      const handleLogin = (e) => {
+        e.preventDefault();
+        if (passInput === ADMIN_PASSWORD) {
+          sessionStorage.setItem('mahyoub_admin_auth', 'true');
+          setIsAuthenticated(true);
+          setPassError('');
+        } else {
+          setPassError('كلمة المرور غير صحيحة! يرجى المحاولة مجدداً.');
+        }
+      };
+
+      const [activeTab, setActiveTab] = useState('wordpress');
+      const [searchQuery, setSearchQuery] = useState('');
+      const [selectedSector, setSelectedSector] = useState('all');
+      const [isModalOpen, setIsModalOpen] = useState(false);
+      const [editingProject, setEditingProject] = useState(null);
+      const [toast, setToast] = useState(null);
+      const [previewDevice, setPreviewDevice] = useState('laptop');
+
+      useEffect(() => {
+        try {
+          localStorage.setItem('mahyoub_portfolio_projects_v1', JSON.stringify(projects));
+        } catch (e) {}
+      }, [projects]);
+
+      const showToast = (msg) => {
+        setToast(msg);
+        setTimeout(() => setToast(null), 3500);
+      };
+
+      const handleSaveProject = (proj) => {
+        if (editingProject) {
+          setProjects(prev => prev.map(p => p.id === proj.id ? proj : p));
+          showToast(`تم تعديل المشروع "${proj.title}" بنجاح`);
+        } else {
+          setProjects(prev => [...prev, proj]);
+          showToast(`تمت إضافة المشروع "${proj.title}" بنجاح`);
+        }
+        setIsModalOpen(false);
+      };
+
+      const handleDeleteProject = (id) => {
+        if (window.confirm('هل أنت متاكد من حذف هذا المشروع؟')) {
+          setProjects(prev => prev.filter(p => p.id !== id));
+          showToast('تم حذف المشروع بنجاح');
+        }
+      };
+
+      const handleFetchScreenshot = async (url) => {
+        if (!url) return null;
+        const formatted = /^https?:\/\//i.test(url.trim()) ? url.trim() : 'https://' + url.trim();
+        
+        // 1. Try Microlink API (Live Headless Chrome render)
+        try {
+          const api = `https://api.microlink.io/?url=${encodeURIComponent(formatted)}&screenshot=true`;
+          const res = await fetch(api);
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.status === 'success' && data?.data?.screenshot?.url) {
+              return data.data.screenshot.url;
+            }
+          }
+        } catch (e) {}
+
+        // 2. Try WordPress mshots with 3.5s delay to let server generate past "Generating Preview..."
+        try {
+          const wpMshots = `https://s0.wp.com/mshots/v1/${encodeURIComponent(formatted)}?w=1200&h=800`;
+          const triggerImg = new Image();
+          triggerImg.src = wpMshots;
+          
+          await new Promise(r => setTimeout(r, 3500));
+          return `${wpMshots}&v=${Date.now()}`;
+        } catch (e) {}
+
+        return `https://s0.wp.com/mshots/v1/${encodeURIComponent(formatted)}?w=1200&h=800`;
+      };
+
+      const currentProjects = projects.filter(p => {
+        if (p.serviceId !== activeTab) return false;
+        if (selectedSector !== 'all' && p.sector !== selectedSector) return false;
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          return p.title?.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q) || p.sector?.toLowerCase().includes(q);
+        }
+        return true;
+      });
+
+      if (!isAuthenticated) {
+        return (
+          <div style={{
+            minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'var(--bg-gradient, #0F172A)', padding: '1.5rem', fontFamily: 'Zain, sans-serif'
+          }}>
+            <form onSubmit={handleLogin} style={{
+              background: 'rgba(30, 41, 59, 0.85)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '24px', padding: '2.5rem', maxWidth: '420px', width: '100%', textAlign: 'center',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+            }}>
+              <div style={{
+                width: '70px', height: '70px', borderRadius: '50%', background: 'linear-gradient(135deg, #2563EB, #7C3AED)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', fontSize: '1.8rem', color: 'white'
+              }}>
+                <i className="fas fa-lock"></i>
+              </div>
+              <h2 style={{ color: 'white', marginBottom: '0.5rem', fontSize: '1.6rem' }}>لوحة تحكم مهيوب</h2>
+              <p style={{ color: '#94A3B8', marginBottom: '1.5rem', fontSize: '0.95rem' }}>منطقة محمية - أدخل كلمة المرور للمتابعة</p>
+              
+              {passError && (
+                <div style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.75rem', borderRadius: '12px', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                  <i className="fas fa-exclamation-triangle"></i> {passError}
+                </div>
+              )}
+
+              <input
+                type="password"
+                placeholder="أدخل كلمة المرور..."
+                value={passInput}
+                onChange={e => setPassInput(e.target.value)}
+                style={{
+                  width: '100%', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.15)',
+                  background: 'rgba(15, 23, 42, 0.6)', color: 'white', fontSize: '1rem', outline: 'none', marginBottom: '1.25rem', textAlign: 'center'
+                }}
+                autoFocus
+              />
+              
+              <button type="submit" style={{
+                width: '100%', padding: '0.85rem', borderRadius: '12px', background: 'linear-gradient(135deg, #2563EB, #4F46E5)',
+                color: 'white', border: 'none', fontWeight: 'bold', fontSize: '1.05rem', cursor: 'pointer'
+              }}>
+                <i className="fas fa-sign-in-alt"></i> تسجيل الدخول
+              </button>
+            </form>
+          </div>
+        );
+      }
+
+      return (
+        <div className="app-container">
+          {/* Header */}
+          <header className="dashboard-header">
+            <div className="brand-info">
+              <div className="brand-icon"><i className="fas fa-chart-pie"></i></div>
+              <div className="brand-titles">
+                <h1>لوحة تحكم مهيوب <span style={{ fontSize: '0.85rem', padding: '0.2rem 0.6rem', borderRadius: '12px', background: 'var(--accent)', color: 'white' }}>React Admin</span></h1>
+                <p>إدارة معارض الأعمال والتسويق الرقمي وتوليد أكواد التصدير للموقع</p>
+              </div>
+            </div>
+
+            <div className="header-actions">
+              <button className="btn-secondary" style={{ padding: '0.5rem 0.8rem', fontSize: '0.9rem', background: 'rgba(239, 68, 68, 0.2)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.3)' }} onClick={() => {
+                sessionStorage.removeItem('mahyoub_admin_auth');
+                setIsAuthenticated(false);
+              }}><i className="fas fa-lock"></i> قفل اللوحة</button>
+              <div className="save-status-badge" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                <i className="fas fa-cloud"></i> <span>متزامن ومحفوظ بالسحاب ☁️</span>
+              </div>
+              <button className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.95rem', background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', border: 'none', color: '#fff', borderRadius: 'var(--radius-sm)', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }} onClick={() => {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projects, null, 2));
+                const a = document.createElement('a'); a.href = dataStr; a.download = 'projects.json'; a.click();
+                showToast('تم تحميل projects.json المحدث! ارفعه إلى GitHub ليتزامن عند كافة الزوار أوتوماتيكياً');
+              }}><i className="fas fa-cloud-upload-alt"></i> تحميل projects.json لرفع GitHub</button>
+              <button className="btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.95rem' }} onClick={() => {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projects, null, 2));
+                const a = document.createElement('a'); a.href = dataStr; a.download = 'mahyoub_portfolio_backup.json'; a.click();
+                showToast('تم تصدير نسخة JSON الاحتياطية بنجاح');
+              }}><i className="fas fa-download"></i> تصدير JSON</button>
+
+              <label className="btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.95rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                <i className="fas fa-file-import"></i> استيراد JSON
+                <input type="file" accept=".json" style={{ display: 'none' }} onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    try {
+                      const imported = JSON.parse(event.target.result);
+                      if (Array.isArray(imported)) {
+                        setProjects(imported);
+                        showToast(`تم استيراد ${imported.length} مشروع بنجاح!`);
+                      }
+                    } catch (err) {
+                      alert('ملف JSON غير صالح');
+                    }
+                  };
+                  reader.readAsText(file);
+                }} />
+              </label>
+
+              <button className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.95rem' }} onClick={() => {
+                const jsContent = `document.addEventListener('DOMContentLoaded', () => {\n  const INITIAL_LIMIT = 12;\n  const DEFAULT_PROJECTS = ${JSON.stringify(projects, null, 2)};\n  // ...\n});`;
+                const blob = new Blob([`// ملف main.js الدائم لموقع مهيوب\nconst DEFAULT_PROJECTS = ${JSON.stringify(projects, null, 2)};`], { type: 'text/javascript' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url; a.download = 'main_projects_data.js'; a.click();
+                showToast('تم تنزيل كود main_projects_data.js الدائم بنجاح!');
+              }}><i className="fas fa-file-code"></i> تنزيل كود main.js الدائم</button>
+            </div>
+          </header>
+
+          {/* Quick Stats */}
+          <div className="stats-grid">
+            <div className="stat-card">
+              <div className="stat-info"><div className="stat-value">{projects.length}</div><div className="stat-label">إجمالي المشاريع</div></div>
+              <div className="stat-icon" style={{ background: 'var(--accent-glow)', color: 'var(--accent)' }}><i className="fas fa-briefcase"></i></div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-info"><div className="stat-value">{projects.filter(p => p.serviceId === 'wordpress').length}</div><div className="stat-label">مواقع ووردبريس</div></div>
+              <div className="stat-icon" style={{ background: 'var(--cyan-bg)', color: 'var(--cyan)' }}><i className="fab fa-wordpress"></i></div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-info"><div className="stat-value">{projects.filter(p => p.serviceId === 'ai').length}</div><div className="stat-label">مواقع الذكاء الاصطناعي</div></div>
+              <div className="stat-icon" style={{ background: 'var(--amber-bg)', color: 'var(--amber)' }}><i className="fas fa-robot"></i></div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-info"><div className="stat-value">{projects.filter(p => p.serviceId === 'google-ads').length}</div><div className="stat-label">إعلانات جوجل</div></div>
+              <div className="stat-icon" style={{ background: 'var(--emerald-bg)', color: 'var(--emerald)' }}><i className="fab fa-google"></i></div>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <nav className="tabs-header">
+            <div className="tabs-nav">
+              {INITIAL_SERVICES.map(s => (
+                <button key={s.id} className={`tab-btn ${activeTab === s.id ? 'active' : ''}`} onClick={() => setActiveTab(s.id)}>
+                  <i className={`fab ${s.icon} fas ${s.icon}`}></i> <span>{s.name}</span>
+                  <span className="tab-badge">{projects.filter(p => p.serviceId === s.id).length}</span>
+                </button>
+              ))}
+              <button className={`tab-btn ${activeTab === 'publish' ? 'active' : ''}`} style={activeTab === 'publish' ? {} : { border: '1px dashed var(--accent)', color: 'var(--accent)' }} onClick={() => setActiveTab('publish')}>
+                <i className="fas fa-rocket"></i> <span>لوحة النشر والتصدير (HTML)</span>
+              </button>
+            </div>
+          </nav>
+
+          {/* Main View */}
+          {activeTab === 'publish' ? (
+            <div className="exporter-panel">
+              <div className="exporter-toolbar">
+                <div>
+                  <h3 style={{ fontSize: '1.4rem', color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <i className="fas fa-code" style={{ color: 'var(--accent)' }}></i> تصدير بيانات الصفحة ونشر كود HTML
+                  </h3>
+                  <p style={{ color: 'var(--text-muted)' }}>يولد كود HTML جاهزاً فورياً لكل خدمة</p>
+                </div>
+                <div style={{ display: 'flex', gap: '0.85rem' }}>
+                  <button className="btn-primary" onClick={() => {
+                    navigator.clipboard.writeText(generateServiceHTML(projects, 'all'));
+                    showToast('تم نسخ كود HTML الخاص بكافة الخدمات بنجاح!');
+                  }}><i className="fas fa-copy"></i> تصدير بيانات الصفحة (نسخ الكود)</button>
+                </div>
+              </div>
+
+              {/* Device Switcher */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+                <h4 style={{ color: 'white' }}><i className="fas fa-eye" style={{ color: 'var(--cyan)' }}></i> معاينة مباشرة لكيف ستظهر البطاقة في الموقع</h4>
+                <div className="device-switcher">
+                  <button className={`device-btn ${previewDevice === 'laptop' ? 'active' : ''}`} onClick={() => setPreviewDevice('laptop')}><i className="fas fa-desktop"></i> لابتوب</button>
+                  <button className={`device-btn ${previewDevice === 'tablet' ? 'active' : ''}`} onClick={() => setPreviewDevice('tablet')}><i className="fas fa-tablet-alt"></i> تابلت</button>
+                  <button className={`device-btn ${previewDevice === 'mobile' ? 'active' : ''}`} onClick={() => setPreviewDevice('mobile')}><i className="fas fa-mobile-alt"></i> جوال</button>
+                </div>
+              </div>
+
+              <div className="preview-container-wrapper">
+                <div className={`preview-frame ${previewDevice}`}>
+                  <div className="preview-browser-bar">
+                    <div className="browser-dots"><div className="browser-dot" style={{ background: '#E94560' }}></div><div className="browser-dot" style={{ background: '#F59E0B' }}></div><div className="browser-dot" style={{ background: '#10B981' }}></div></div>
+                    <div className="browser-url">https://almoliky.com/portfolio.html</div>
+                  </div>
+                  <div style={{ padding: '2rem 1.5rem', background: '#1A1A2E' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: previewDevice === 'mobile' ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+                      {projects.map(p => (
+                        <div key={p.id} className="portfolio-card">
+                          <div className="portfolio-image-wrapper"><img src={p.image} className="portfolio-img" /><span className="sector-badge">{p.sector}</span></div>
+                          <div className="portfolio-content">
+                            <h4 style={{ color: 'white' }}>{p.title}</h4>
+                            <p style={{ color: '#94A3B8', fontSize: '0.95rem' }}>{p.description}</p>
+                            <div className="portfolio-result"><i className="fas fa-chart-line"></i><span>{p.result}</span></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="code-box-wrapper">
+                <div className="code-box-header"><span><i className="fas fa-code"></i> كود HTML المولد للتصدير</span></div>
+                <pre className="code-content">{generateServiceHTML(projects, 'all')}</pre>
+              </div>
+            </div>
+          ) : (
+            <main>
+              <div className="service-bar">
+                <div className="service-title-area">
+                  <h2>{INITIAL_SERVICES.find(s => s.id === activeTab)?.name}</h2>
+                  <p>{INITIAL_SERVICES.find(s => s.id === activeTab)?.description}</p>
+                </div>
+                <div className="filter-actions">
+                  <div className="search-input-wrapper">
+                    <i className="fas fa-search"></i>
+                    <input type="text" className="search-input" placeholder="بحث..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                  </div>
+                  <select className="select-filter" value={selectedSector} onChange={e => setSelectedSector(e.target.value)}>
+                    <option value="all">جميع القطاعات</option>
+                    {SECTORS_LIST.map(sec => <option key={sec} value={sec}>{sec}</option>)}
+                  </select>
+                  <button className="btn-primary" onClick={() => { setEditingProject(null); setIsModalOpen(true); }}>
+                    <i className="fas fa-plus-circle"></i> إضافة مشروع جديد
+                  </button>
+                </div>
+              </div>
+
+              <div className="projects-grid">
+                {currentProjects.map(proj => (
+                  <div key={proj.id} className="portfolio-card">
+                    <div className="portfolio-image-wrapper">
+                      <img src={proj.image} alt={proj.title} className="portfolio-img" />
+                      <span className="sector-badge"><i className="fas fa-tag"></i> {proj.sector}</span>
+                    </div>
+                    <div className="portfolio-content">
+                      <h3 className="portfolio-title">{proj.title}</h3>
+                      <p className="portfolio-desc">{proj.description}</p>
+                      <div className="portfolio-result"><i className="fas fa-chart-line"></i><span>{proj.result}</span></div>
+                      <div className="portfolio-card-actions">
+                        <a href={proj.url} target="_blank" className="btn-visit">زيارة الموقع <i className="fas fa-arrow-left"></i></a>
+                        <div style={{ display: 'flex', gap: '0.4rem' }}>
+                          <button className="action-icon-btn" onClick={() => {
+                            navigator.clipboard.writeText(generateServiceHTML([proj], proj.serviceId));
+                            showToast(`تم نسخ كود بطاقة ${proj.title}`);
+                          }}><i className="fas fa-code"></i></button>
+                          <button className="action-icon-btn" onClick={() => { setEditingProject(proj); setIsModalOpen(true); }}><i className="fas fa-pen"></i></button>
+                          <button className="action-icon-btn" style={{ color: '#FCA5A5' }} onClick={() => handleDeleteProject(proj.id)}><i className="fas fa-trash-alt"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </main>
+          )}
+
+          {/* Modal */}
+          {isModalOpen && (
+            <ProjectModal
+              project={editingProject}
+              serviceId={activeTab === 'publish' ? 'wordpress' : activeTab}
+              onSave={handleSaveProject}
+              onClose={() => setIsModalOpen(false)}
+              onFetchScreenshot={handleFetchScreenshot}
+            />
+          )}
+
+          {toast && <div className="toast-container"><div className="toast"><i className="fas fa-check-circle" style={{ color: '#10B981' }}></i><span>{toast}</span></div></div>}
+        </div>
+      );
+    }
+
+    function ProjectModal({ project, serviceId, onSave, onClose, onFetchScreenshot }) {
+      const [form, setForm] = useState(project || {
+        title: '', description: '', url: '', sector: SECTORS_LIST[0], result: '', image: '', serviceId
+      });
+      const [loading, setLoading] = useState(false);
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave({ ...form, id: project ? project.id : 'proj-' + Date.now() });
+      };
+
+      return (
+        <div className="modal-overlay" onClick={onClose}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{project ? 'تعديل مشروع' : 'إضافة مشروع جديد'}</h3>
+              <button onClick={onClose} style={{ color: 'white', fontSize: '1.2rem' }}>✕</button>
+            </div>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="form-group">
+                <label className="form-label">الخدمة</label>
+                <select className="form-select" value={form.serviceId} onChange={e => setForm({...form, serviceId: e.target.value})}>
+                  {INITIAL_SERVICES.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">رابط الموقع (لسحب الصورة تلقائياً)</label>
+                <div className="screenshot-fetch-row">
+                  <input type="text" className="form-input" placeholder="https://..." value={form.url} onChange={e => setForm({...form, url: e.target.value})} />
+                  <button type="button" className="btn-fetch-screenshot" onClick={async () => {
+                    setLoading(true);
+                    const imgUrl = await onFetchScreenshot(form.url);
+                    if (imgUrl) setForm(prev => ({ ...prev, image: imgUrl }));
+                    setLoading(false);
+                  }}>{loading ? 'جاري السحب...' : 'سحب اللقطة تلقائياً'}</button>
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">صورة المعاينة / رفع صورة</label>
+                <input type="text" className="form-input" placeholder="رابط الصورة المباشر" value={form.image} onChange={e => setForm({...form, image: e.target.value})} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">اسم المشروع</label>
+                <input type="text" className="form-input" required value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">القطاع</label>
+                <select className="form-select" value={form.sector} onChange={e => setForm({...form, sector: e.target.value})}>
+                  {SECTORS_LIST.map(sec => <option key={sec} value={sec}>{sec}</option>)}
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">النتيجة المحققة</label>
+                <input type="text" className="form-input" required placeholder="مثال: +300% مبيعات" value={form.result} onChange={e => setForm({...form, result: e.target.value})} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">وصف قصير</label>
+                <textarea className="form-textarea" rows={3} required value={form.description} onChange={e => setForm({...form, description: e.target.value})}></textarea>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
+                <button type="button" className="btn-secondary" onClick={onClose}>إلغاء</button>
+                <button type="submit" className="btn-primary">حفظ المشروع</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

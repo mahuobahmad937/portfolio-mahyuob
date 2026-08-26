@@ -1,0 +1,20 @@
+# ==========================================================================
+# Mahyoub Portfolio - robots.txt
+# ==========================================================================
+
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /wordpress.html
+Allow: /ai.html
+Allow: /google-ads.html
+
+# حظر لوحة التحكم والملفات الخاصة
+Disallow: /admin.html
+Disallow: /node_modules/
+Disallow: /src/
+Disallow: /.git/
+Disallow: /vite.config.js
+
+# خريطة الموقع
+Sitemap: https://mahyoub.com/sitemap.xml
