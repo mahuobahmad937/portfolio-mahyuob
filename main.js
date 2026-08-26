@@ -17,7 +17,7 @@ if (document.readyState === 'loading') {
 }
 
 /* ==========================================================================
-   5. المعرض والتحديث التلقائي للمشاريع من لوحة التحكم (Dynamic Portfolio)
+   5. المعرض والتحديث التلقائي للمشاريع من Firestore (Dynamic Portfolio)
    ========================================================================== */
 function initDynamicPortfolio() {
   const portfolioSections = document.querySelectorAll('.portfolio-section');
@@ -41,38 +41,20 @@ function initDynamicPortfolio() {
   async function loadAndRender() {
     let projects = DEFAULT_PROJECTS;
 
-    // 1. جلب المشاريع من ملف projects.json السحابي المتزامن
+    // جلب المشاريع من Firestore
     try {
-      const res = await fetch('./projects.json?v=' + Date.now());
-      if (res.ok) {
-        const jsonProjects = await res.json();
-        if (Array.isArray(jsonProjects) && jsonProjects.length > 0) {
-          projects = jsonProjects;
-          try { localStorage.setItem('mahyoub_portfolio_projects_v1', JSON.stringify(projects)); } catch(e){}
+      const snapshot = await db.collection('projects').orderBy('createdAt', 'desc').get();
+      if (!snapshot.empty) {
+        const firestoreProjects = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        if (firestoreProjects.length > 0) {
+          projects = firestoreProjects;
         }
       }
     } catch (e) {
-      console.warn('Unable to fetch projects.json, fallback to localStorage/default:', e);
-    }
-
-    // 2. في حال الانقطاع، التراجع للتخزين المحلي
-    if (projects === DEFAULT_PROJECTS) {
-      try {
-        const saved = localStorage.getItem('mahyoub_portfolio_projects_v1');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            const isCorrupt = parsed.some(p => (p.title && p.title.includes('???')) || (p.sector && p.sector.includes('???')));
-            if (isCorrupt) {
-              localStorage.removeItem('mahyoub_portfolio_projects_v1');
-            } else {
-              projects = parsed;
-            }
-          }
-        }
-      } catch (e) {
-        console.warn('Unable to load projects from localStorage:', e);
-      }
+      console.warn('Unable to fetch projects from Firestore, using defaults:', e);
     }
 
     portfolioSections.forEach(section => {
@@ -184,13 +166,6 @@ function initDynamicPortfolio() {
 
   // Initial Render
   loadAndRender();
-
-  // Listen to live changes from admin dashboard in another tab
-  window.addEventListener('storage', (e) => {
-    if (e.key === 'mahyoub_portfolio_projects_v1') {
-      loadAndRender();
-    }
-  });
 }
 
 

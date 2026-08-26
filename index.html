@@ -565,6 +565,21 @@
     </div>
   </div>
 
-  <script type="module" src="main.js"></script>
+  <!-- Firebase SDK (App + Firestore) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIw7n-h4gct954fKxfZ4cpVXaSsAvSt3A",
+      authDomain: "mahyuob-portfolio.firebaseapp.com",
+      projectId: "mahyuob-portfolio",
+      storageBucket: "mahyuob-portfolio.firebasestorage.app",
+      messagingSenderId: "739542169458",
+      appId: "1:739542169458:web:2c3233879d003d2c07cfeb"
+    };
+    const firebaseApp = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+  <script src="main.js"></script>
 </body>
 </html>

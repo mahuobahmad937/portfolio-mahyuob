@@ -22,6 +22,24 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <!-- Babel standalone for JSX -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Firebase SDK (App + Firestore + Auth) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDIw7n-h4gct954fKxfZ4cpVXaSsAvSt3A",
+      authDomain: "mahyuob-portfolio.firebaseapp.com",
+      projectId: "mahyuob-portfolio",
+      storageBucket: "mahyuob-portfolio.firebasestorage.app",
+      messagingSenderId: "739542169458",
+      appId: "1:739542169458:web:2c3233879d003d2c07cfeb"
+    };
+    const firebaseApp = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+  </script>
   
   <style>
     /* ==========================================================================
@@ -831,6 +849,9 @@
       }
     ];
 
+    // مرجع Firestore
+    const projectsCollection = db.collection('projects');
+
     function generateServiceHTML(projects, serviceId = 'all') {
       const filtered = serviceId === 'all' ? projects : projects.filter(p => p.serviceId === serviceId);
       const titleText = serviceId === 'wordpress' ? 'معرض مواقع ووردبريس المخصصة'
@@ -879,41 +900,64 @@ ${cardsHtml}
     }
 
     function App() {
-      const [projects, setProjects] = useState(() => {
-        try {
-          const saved = localStorage.getItem('mahyoub_portfolio_projects_v1');
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              const isCorrupt = parsed.some(p => (p.title && p.title.includes('???')) || (p.sector && p.sector.includes('???')));
-              if (isCorrupt) {
-                localStorage.removeItem('mahyoub_portfolio_projects_v1');
-              } else {
-                return parsed;
-              }
-            }
-          }
-        } catch (e) {}
-        return INITIAL_PROJECTS;
-      });
+      const [projects, setProjects] = useState([]);
+      const [firestoreLoading, setFirestoreLoading] = useState(true);
 
-      const [isAuthenticated, setIsAuthenticated] = useState(() => {
-        return sessionStorage.getItem('mahyoub_admin_auth') === 'true';
-      });
+      const [isAuthenticated, setIsAuthenticated] = useState(false);
+      const [authLoading, setAuthLoading] = useState(true);
+      const [emailInput, setEmailInput] = useState('');
       const [passInput, setPassInput] = useState('');
       const [passError, setPassError] = useState('');
-      const ADMIN_PASSWORD = 'mahyoub2026'; // كلمة المرور الافتراضية للوحة التحكم
 
-      const handleLogin = (e) => {
+      // مراقبة حالة تسجيل الدخول عبر Firebase Auth
+      useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+          setIsAuthenticated(!!user);
+          setAuthLoading(false);
+        });
+        return () => unsubscribe();
+      }, []);
+
+      const handleLogin = async (e) => {
         e.preventDefault();
-        if (passInput === ADMIN_PASSWORD) {
-          sessionStorage.setItem('mahyoub_admin_auth', 'true');
-          setIsAuthenticated(true);
-          setPassError('');
-        } else {
-          setPassError('كلمة المرور غير صحيحة! يرجى المحاولة مجدداً.');
+        setPassError('');
+        try {
+          await auth.signInWithEmailAndPassword(emailInput, passInput);
+        } catch (err) {
+          const errorMessages = {
+            'auth/user-not-found': 'البريد الإلكتروني غير مسجل.',
+            'auth/wrong-password': 'كلمة المرور غير صحيحة!',
+            'auth/invalid-email': 'صيغة البريد الإلكتروني غير صحيحة.',
+            'auth/invalid-credential': 'بيانات الدخول غير صحيحة! تأكد من البريد وكلمة المرور.',
+            'auth/too-many-requests': 'محاولات كثيرة! يرجى الانتظار قليلاً ثم المحاولة مجدداً.'
+          };
+          setPassError(errorMessages[err.code] || 'حدث خطأ أثناء تسجيل الدخول: ' + err.message);
         }
       };
+
+      const handleLogout = async () => {
+        await auth.signOut();
+      };
+
+      // الاستماع لتغييرات Firestore في الوقت الحقيقي
+      useEffect(() => {
+        const unsubscribe = projectsCollection.orderBy('createdAt', 'desc').onSnapshot(
+          (snapshot) => {
+            const firestoreProjects = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+            setProjects(firestoreProjects.length > 0 ? firestoreProjects : INITIAL_PROJECTS);
+            setFirestoreLoading(false);
+          },
+          (error) => {
+            console.error('Firestore listen error:', error);
+            setProjects(INITIAL_PROJECTS);
+            setFirestoreLoading(false);
+          }
+        );
+        return () => unsubscribe();
+      }, []);
 
       const [activeTab, setActiveTab] = useState('wordpress');
       const [searchQuery, setSearchQuery] = useState('');
@@ -923,32 +967,40 @@ ${cardsHtml}
       const [toast, setToast] = useState(null);
       const [previewDevice, setPreviewDevice] = useState('laptop');
 
-      useEffect(() => {
-        try {
-          localStorage.setItem('mahyoub_portfolio_projects_v1', JSON.stringify(projects));
-        } catch (e) {}
-      }, [projects]);
-
-      const showToast = (msg) => {
-        setToast(msg);
+      const showToast = (msg, isError = false) => {
+        setToast({ msg, isError });
         setTimeout(() => setToast(null), 3500);
       };
 
-      const handleSaveProject = (proj) => {
-        if (editingProject) {
-          setProjects(prev => prev.map(p => p.id === proj.id ? proj : p));
-          showToast(`تم تعديل المشروع "${proj.title}" بنجاح`);
-        } else {
-          setProjects(prev => [...prev, proj]);
-          showToast(`تمت إضافة المشروع "${proj.title}" بنجاح`);
+      const handleSaveProject = async (proj) => {
+        try {
+          if (editingProject) {
+            // تعديل مشروع موجود في Firestore
+            const { id, ...data } = proj;
+            await projectsCollection.doc(id).update({ ...data, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+            showToast(`تم تعديل المشروع "${proj.title}" بنجاح ☁️`);
+          } else {
+            // إضافة مشروع جديد إلى Firestore
+            const { id, ...data } = proj;
+            await projectsCollection.add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+            showToast(`تمت إضافة المشروع "${proj.title}" بنجاح ☁️`);
+          }
+          setIsModalOpen(false);
+        } catch (error) {
+          console.error('Save error:', error);
+          showToast('❌ حدث خطأ أثناء حفظ المشروع: ' + error.message, true);
         }
-        setIsModalOpen(false);
       };
 
-      const handleDeleteProject = (id) => {
-        if (window.confirm('هل أنت متاكد من حذف هذا المشروع؟')) {
-          setProjects(prev => prev.filter(p => p.id !== id));
-          showToast('تم حذف المشروع بنجاح');
+      const handleDeleteProject = async (id) => {
+        if (window.confirm('هل أنت متأكد من حذف هذا المشروع؟')) {
+          try {
+            await projectsCollection.doc(id).delete();
+            showToast('تم حذف المشروع بنجاح ☁️');
+          } catch (error) {
+            console.error('Delete error:', error);
+            showToast('❌ حدث خطأ أثناء حذف المشروع: ' + error.message, true);
+          }
         }
       };
 
@@ -991,6 +1043,20 @@ ${cardsHtml}
         return true;
       });
 
+      if (authLoading) {
+        return (
+          <div style={{
+            minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'var(--bg-gradient, #0F172A)', fontFamily: 'Zain, sans-serif'
+          }}>
+            <div style={{ textAlign: 'center', color: '#94A3B8' }}>
+              <i className="fas fa-spinner fa-spin" style={{ fontSize: '2rem', marginBottom: '1rem', display: 'block', color: 'var(--accent)' }}></i>
+              <p>جاري التحقق من تسجيل الدخول...</p>
+            </div>
+          </div>
+        );
+      }
+
       if (!isAuthenticated) {
         return (
           <div style={{
@@ -1009,7 +1075,7 @@ ${cardsHtml}
                 <i className="fas fa-lock"></i>
               </div>
               <h2 style={{ color: 'white', marginBottom: '0.5rem', fontSize: '1.6rem' }}>لوحة تحكم مهيوب</h2>
-              <p style={{ color: '#94A3B8', marginBottom: '1.5rem', fontSize: '0.95rem' }}>منطقة محمية - أدخل كلمة المرور للمتابعة</p>
+              <p style={{ color: '#94A3B8', marginBottom: '1.5rem', fontSize: '0.95rem' }}>منطقة محمية - سجّل الدخول للمتابعة</p>
               
               {passError && (
                 <div style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.75rem', borderRadius: '12px', fontSize: '0.9rem', marginBottom: '1rem' }}>
@@ -1018,15 +1084,26 @@ ${cardsHtml}
               )}
 
               <input
+                type="email"
+                placeholder="البريد الإلكتروني..."
+                value={emailInput}
+                onChange={e => setEmailInput(e.target.value)}
+                style={{
+                  width: '100%', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.15)',
+                  background: 'rgba(15, 23, 42, 0.6)', color: 'white', fontSize: '1rem', outline: 'none', marginBottom: '0.75rem', textAlign: 'center'
+                }}
+                autoFocus
+              />
+
+              <input
                 type="password"
-                placeholder="أدخل كلمة المرور..."
+                placeholder="كلمة المرور..."
                 value={passInput}
                 onChange={e => setPassInput(e.target.value)}
                 style={{
                   width: '100%', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.15)',
                   background: 'rgba(15, 23, 42, 0.6)', color: 'white', fontSize: '1rem', outline: 'none', marginBottom: '1.25rem', textAlign: 'center'
                 }}
-                autoFocus
               />
               
               <button type="submit" style={{
@@ -1053,10 +1130,7 @@ ${cardsHtml}
             </div>
 
             <div className="header-actions">
-              <button className="btn-secondary" style={{ padding: '0.5rem 0.8rem', fontSize: '0.9rem', background: 'rgba(239, 68, 68, 0.2)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.3)' }} onClick={() => {
-                sessionStorage.removeItem('mahyoub_admin_auth');
-                setIsAuthenticated(false);
-              }}><i className="fas fa-lock"></i> قفل اللوحة</button>
+              <button className="btn-secondary" style={{ padding: '0.5rem 0.8rem', fontSize: '0.9rem', background: 'rgba(239, 68, 68, 0.2)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.3)' }} onClick={handleLogout}><i className="fas fa-sign-out-alt"></i> تسجيل خروج</button>
               <div className="save-status-badge" style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
                 <i className="fas fa-cloud"></i> <span>متزامن ومحفوظ بالسحاب ☁️</span>
               </div>
@@ -1255,7 +1329,7 @@ ${cardsHtml}
             />
           )}
 
-          {toast && <div className="toast-container"><div className="toast"><i className="fas fa-check-circle" style={{ color: '#10B981' }}></i><span>{toast}</span></div></div>}
+          {toast && <div className="toast-container"><div className="toast" style={toast.isError ? { borderColor: 'rgba(239, 68, 68, 0.5)' } : {}}><i className={toast.isError ? "fas fa-exclamation-circle" : "fas fa-check-circle"} style={{ color: toast.isError ? '#EF4444' : '#10B981' }}></i><span>{toast.msg}</span></div></div>}
         </div>
       );
     }
