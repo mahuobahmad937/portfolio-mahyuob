@@ -43,13 +43,19 @@ function initDynamicPortfolio() {
 
     // جلب المشاريع من Firestore
     try {
-      const snapshot = await db.collection('projects').orderBy('createdAt', 'desc').get();
+      const snapshot = await db.collection('projects').get();
       if (!snapshot.empty) {
         const firestoreProjects = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         }));
         if (firestoreProjects.length > 0) {
+          // الترتيب حسب تاريخ الإنشاء: الأقدم أولاً (تصاعدياً)
+          firestoreProjects.sort((a, b) => {
+            const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt?.seconds ? a.createdAt.seconds * 1000 : 0);
+            const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt?.seconds ? b.createdAt.seconds * 1000 : 0);
+            return timeA - timeB;
+          });
           projects = firestoreProjects;
         }
       }
