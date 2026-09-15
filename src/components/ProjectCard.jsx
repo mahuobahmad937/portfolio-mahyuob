@@ -44,7 +44,7 @@ export default function ProjectCard({ project, onEdit, onDelete, onCopyCardHtml 
             <a
               href={project.url}
               target="_blank"
-              rel="noopener noreferrer"
+              rel="nofollow noopener noreferrer"
               className="btn-visit"
             >
               زيارة الموقع <i className="fas fa-arrow-left" style={{ fontSize: '0.85rem' }}></i>

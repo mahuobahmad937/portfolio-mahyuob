@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="googlebot" content="noindex, nofollow">
   <title>لوحة تحكم مهيوب | إدارة المعرض والخدمات الرقمية</title>
   <!-- أيقونة الموقع (Favicon) -->
   <link rel="icon" type="image/png" href="assets/avatar.png">
@@ -874,7 +875,7 @@
           <span>${p.result}</span>
         </div>
         <div class="portfolio-actions">
-          <a href="${p.url}" target="_blank" rel="noopener noreferrer" class="btn-visit">
+          <a href="${p.url}" target="_blank" rel="nofollow noopener noreferrer" class="btn-visit">
             زيارة الموقع <i class="fas fa-external-link-alt"></i>
           </a>
         </div>
@@ -1307,7 +1308,7 @@ ${cardsHtml}
                       <p className="portfolio-desc">{proj.description}</p>
                       <div className="portfolio-result"><i className="fas fa-chart-line"></i><span>{proj.result}</span></div>
                       <div className="portfolio-card-actions">
-                        <a href={proj.url} target="_blank" className="btn-visit">زيارة الموقع <i className="fas fa-arrow-left"></i></a>
+                        <a href={proj.url} target="_blank" rel="nofollow noopener noreferrer" className="btn-visit">زيارة الموقع <i className="fas fa-arrow-left"></i></a>
                         <div style={{ display: 'flex', gap: '0.4rem' }}>
                           <button className="action-icon-btn" onClick={() => {
                             navigator.clipboard.writeText(generateServiceHTML([proj], proj.serviceId));

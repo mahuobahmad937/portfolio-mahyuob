@@ -108,7 +108,7 @@ export default function App() {
       <span>${project.result}</span>
     </div>
     <div class="portfolio-actions">
-      <a href="${project.url}" target="_blank" rel="noopener noreferrer" class="btn-visit">
+      <a href="${project.url}" target="_blank" rel="nofollow noopener noreferrer" class="btn-visit">
         زيارة الموقع <i class="fas fa-external-link-alt"></i>
       </a>
     </div>
